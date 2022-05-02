@@ -1,14 +1,34 @@
 <script context="module" lang="ts">
-	import { fetchPokemon } from '../stores/pokemonstore';
-	export async function load(ctx: Record<string, any>): Promise<Record<string, unknown>> {
-		await fetchPokemon();
-		return { status: 200 };
+	import { pokemon, isLoaded } from '../stores/pokemonstore';
+	import { get } from 'svelte/store';
+
+	export async function load({ fetch }: Record<string, any>): Promise<Record<string, unknown>> {
+		if (get(isLoaded)) return {};
+		try {
+			const url = `https://pokeapi.co/api/v2/pokemon?limit=150`;
+			const res = await fetch(url);
+			const data = await res.json();
+			const loadedPokemon = data.results.map(
+				(data: { name: string; url: string }, index: number) => ({
+					name: data.name,
+					id: index + 1,
+					image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+						index + 1
+					}.png`
+				})
+			);
+			pokemon.set(loadedPokemon);
+			isLoaded.set(true);
+			return {};
+		} catch (err) {
+			console.error(err);
+			return {};
+		}
 	}
 </script>
 
 <script lang="ts">
 	import PokemanCard from '../components/pokemanCard.svelte';
-	import { pokemon } from '../stores/pokemonstore';
 
 	let searchTerm = '';
 	let filteredPokemon: { name: string; id: number; image: string }[] = [];

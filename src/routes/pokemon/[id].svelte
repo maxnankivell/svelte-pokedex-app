@@ -1,7 +1,6 @@
 <script context="module" lang="ts">
-	export async function load(ctx: Record<string, any>): Promise<Record<string, any> | null> {
-		await new Promise((resolve) => setTimeout(resolve, 3000));
-		let id = ctx.params.id;
+	export async function load({ params, fetch }: Record<string, any>): Promise<Record<string, any>> {
+		let id = params.id;
 		try {
 			const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
 			const res = await fetch(url);
@@ -9,7 +8,7 @@
 			return { props: { pokeman: data } };
 		} catch (err) {
 			console.error(err);
-			return null;
+			return {};
 		}
 	}
 </script>
