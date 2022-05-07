@@ -29,6 +29,8 @@
 
 <script lang="ts">
 	import PokemanCard from '../components/pokemanCard.svelte';
+	import { fade } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 
 	let searchTerm = '';
 	let filteredPokemon: { name: string; id: number; image: string }[] = [];
@@ -45,14 +47,21 @@
 </script>
 
 <svelte:head><title>Pokedex Home</title></svelte:head>
-<h1 class="text-4xl text-center my-8 uppercase">Original Pokemon Pokedex</h1>
+
+<h1
+	class="text-4xl text-center my-8 uppercase"
+	in:fade={{ delay: 0, duration: 300, easing: cubicOut }}
+>
+	Original Pokemon Pokedex
+</h1>
 <input
 	class="w-full rounded-md text-lg p-4 border-2 border-gray-200"
 	bind:value={searchTerm}
 	placeholder="Search Pokemon"
+	in:fade={{ delay: 0, duration: 300, easing: cubicOut }}
 />
 
-<div class="py-4 grid gap-4 md:grid-cols-2 grid-cols-1">
+<div class="py-4 grid gap-4 grid-cols-1 sm:grid-cols-2">
 	{#each filteredPokemon as pokeman}
 		<PokemanCard {pokeman} />
 	{/each}
